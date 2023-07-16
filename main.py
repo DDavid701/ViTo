@@ -7,7 +7,7 @@ import pyjokes as pj
 import requests
 import os
 os.system("cls")
-load_dotenv("assets/settings.env") #SettingsFile path
+load_dotenv("settings.env") #SettingsFile path
 #Settings
 Username=os.getenv("Username")
 AssistantName=os.getenv("AssistantName")
@@ -58,7 +58,7 @@ if __name__ == "__main__":
             while True:
 
                 if "witz" in listened:
-                    speek(pyjokes.get_joke(language="de"))
+                    speek(pyjokes.get_joke(language="en"))
                     break
 
                 if "stop vito" in listened:
