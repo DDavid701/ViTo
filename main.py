@@ -1,4 +1,4 @@
-import pyjokes
+import time
 import pyttsx3
 import speech_recognition as sr
 from dotenv import load_dotenv
@@ -14,8 +14,16 @@ AssistantName=os.getenv("AssistantName")
 GeneralLanguage=os.getenv("GeneralLanguage")
 #Settings
 
+if GeneralLanguage=='de-DE':
+    jokelanguage='de'
+elif GeneralLanguage=='en-GB':
+    jokelanguage='en'
+else:
+    print("AssistantV2 <|> Error 1: Can't define General Language!")
+    raise SystemExit
+
 #VersionChecker
-version='beta-0.1' #Dont Edit this!
+version='beta-0.2' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
@@ -47,26 +55,32 @@ def listen():
     return listened.lower()
 
 if __name__ == "__main__":
+    load_dotenv("messages.env")
+    joke=os.getenv("Joke_" + GeneralLanguage)
+    shutdown=os.getenv("Shutdown_" + GeneralLanguage)
+
     while True:
 
         listened = listen()
 
         if AssistantName in listened:
             first_run = True
-            playsound("assets/assistant_activate.mp3")
+            playsound("assistant_activate.mp3")
 
             while True:
 
-                if "witz" in listened:
-                    speek(pyjokes.get_joke(language="en"))
+                if joke in listened:
+                    speek(pj.get_joke(language=jokelanguage))
                     break
 
-                if "stop vito" in listened:
+                if shutdown in listened:
+                    print("AssistantV2 <|> " + shutdown)
+                    speek(shutdown)
+                    time.sleep(0.3)
                     raise SystemExit
 
                 else:
-                    playsound("assets/assistant_deactivate.mp3")
-
+                    playsound("assistant_deactivate.mp3")
                     break
 
                 first_run = False
