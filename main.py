@@ -23,7 +23,7 @@ else:
     raise SystemExit
 
 #VersionChecker
-version='beta-0.2' #Dont Edit this!
+version='beta-0.3' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
@@ -57,6 +57,7 @@ def listen():
 if __name__ == "__main__":
     load_dotenv("messages.env")
     joke=os.getenv("Joke_" + GeneralLanguage)
+    clock=os.getenv("Clock_" + GeneralLanguage)
     shutdown=os.getenv("Shutdown_" + GeneralLanguage)
 
     while True:
@@ -71,6 +72,11 @@ if __name__ == "__main__":
 
                 if joke in listened:
                     speek(pj.get_joke(language=jokelanguage))
+                    break
+
+                if clock in listened:
+                    clocktime=time.strftime("%H:%M")
+                    speek(clocktime)
                     break
 
                 if shutdown in listened:
