@@ -1,3 +1,4 @@
+import datetime
 import time
 import pyttsx3
 import speech_recognition as sr
@@ -23,7 +24,7 @@ else:
     raise SystemExit
 
 #VersionChecker
-version='beta-0.3' #Dont Edit this!
+version='beta-0.3-pre1' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
@@ -55,9 +56,10 @@ def listen():
     return listened.lower()
 
 if __name__ == "__main__":
-    load_dotenv("messages.env")
+    load_dotenv("assets/messages.env")
     joke=os.getenv("Joke_" + GeneralLanguage)
     clock=os.getenv("Clock_" + GeneralLanguage)
+    date=os.getenv("Date_" + GeneralLanguage)
     shutdown=os.getenv("Shutdown_" + GeneralLanguage)
 
     while True:
@@ -77,6 +79,10 @@ if __name__ == "__main__":
                 if clock in listened:
                     clocktime=time.strftime("%H:%M")
                     speek(clocktime)
+                    break
+                    
+                if date in listened:
+                    speek(datetime.datetime.today())
                     break
 
                 if shutdown in listened:
