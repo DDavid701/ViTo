@@ -15,7 +15,7 @@ GeneralLanguage=os.getenv("GeneralLanguage")
 #Settings
 
 #VersionChecker
-version='beta-0.3' #Dont Edit this!
+version='beta-0.1' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
