@@ -9,7 +9,7 @@ import random
 import requests
 import os
 os.system("cls")
-load_dotenv("settings.env") #SettingsFile path
+load_dotenv("assets/settings.env") #SettingsFile path
 #Settings
 Username=os.getenv("Username")
 AssistantName=os.getenv("AssistantName")
@@ -26,7 +26,7 @@ else:
     raise SystemExit
 
 #VersionChecker
-version='beta-0.4-pre5' #Dont Edit this!
+version='beta-0.4-pre2' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
@@ -58,7 +58,7 @@ def listen():
     return listened.lower()
 
 if __name__ == "__main__":
-    load_dotenv("messages.env")
+    load_dotenv("assets/messages.env")
     joke=os.getenv("Joke_" + GeneralLanguage)
     clock=os.getenv("Clock_" + GeneralLanguage)
     date=os.getenv("Date_" + GeneralLanguage)
@@ -68,6 +68,16 @@ if __name__ == "__main__":
     random_int_gen=os.getenv("RanNum_Gen_" + GeneralLanguage)
     random_int_is=os.getenv("RanNum_Is_" + GeneralLanguage)
     random_int_err=os.getenv("RanNum_Err_" + GeneralLanguage)
+    math_plus_trigger=os.getenv("MathPlus_" + GeneralLanguage)
+    math_plus_main=os.getenv("MathPlus_main_" + GeneralLanguage)
+    math_plus_seco=os.getenv("MathPlus_seco_" + GeneralLanguage)
+    math_plus_answ=os.getenv("MathPlus_answ_" + GeneralLanguage)
+    math_plus_err=os.getenv("MathPlus_err_" + GeneralLanguage)
+    math_minus_trigger = os.getenv("MathMinus_" + GeneralLanguage)
+    math_minus_main = os.getenv("MathMinus_main_" + GeneralLanguage)
+    math_minus_seco = os.getenv("MathMinus_seco_" + GeneralLanguage)
+    math_minus_answ = os.getenv("MathMinus_answ_" + GeneralLanguage)
+    math_minus_err = os.getenv("MathMinus_err_" + GeneralLanguage)
     shutdown=os.getenv("Shutdown_" + GeneralLanguage)
 
     while True:
@@ -76,7 +86,7 @@ if __name__ == "__main__":
 
         if AssistantName in listened:
             first_run = True
-            playsound("assistant_activate.mp3")
+            playsound("assets/assistant_activate.mp3")
 
             while True:
 
@@ -108,30 +118,30 @@ if __name__ == "__main__":
                         speek(random_int_err)
                         break
 
-                if "plus" in listened:
-                    speek("Say the Main Number?")
+                if math_plus_trigger in listened:
+                    speek(math_plus_main)
                     math_plus_first = listen()
-                    speek("Say the Second Number?")
+                    speek(math_plus_seco)
                     math_plus_second = listen()
                     try:
                         math_plus_answer = int(math_plus_first) + int(math_plus_second)
-                        speek("The Answer is " + str(math_plus_answer))
+                        speek(math_plus_answ + str(math_plus_answer))
                         break
                     except Exception:
-                        speek(f"Error: Can't add '{math_plus_second}' on '{math_plus_first}'!")
+                        speek(f"{math_plus_err}")
                         break
-                    
-                if "minus" in listened_text:
-                    speek("Say the Main Number?")
+
+                if math_minus_trigger in listened_text:
+                    speek(math_plus_main)
                     math_minus_first = listen()
-                    speek("Say the Second Number?")
+                    speek(math_plus_seco)
                     math_minus_second = listen()
                     try:
                         math_minus_answer = int(math_minus_first) - int(math_minus_second)
-                        speek("The Answer is " + str(math_minus_answer))
+                        speek(math_minus_answ + str(math_minus_answer))
                         break
                     except Exception:
-                        speek(f"Error: Can't divide '{math_minus_first}' with '{math_minus_second}'!")
+                        speek(f"{math_minus_err}")
                         break
 
 
@@ -142,7 +152,7 @@ if __name__ == "__main__":
                     raise SystemExit
 
                 else:
-                    playsound("assistant_deactivate.mp3")
+                    playsound("assets/assistant_deactivate.mp3")
                     break
 
                 first_run = False
