@@ -9,7 +9,7 @@ import random
 import requests
 import os
 os.system("cls")
-load_dotenv("assets/settings.env") #SettingsFile path
+load_dotenv("settings.env") #SettingsFile path
 #Settings
 Username=os.getenv("Username")
 AssistantName=os.getenv("AssistantName")
@@ -58,7 +58,7 @@ def listen():
     return listened.lower()
 
 if __name__ == "__main__":
-    load_dotenv("assets/messages.env")
+    load_dotenv("messages.env")
     joke=os.getenv("Joke_" + GeneralLanguage)
     clock=os.getenv("Clock_" + GeneralLanguage)
     date=os.getenv("Date_" + GeneralLanguage)
@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
         if AssistantName in listened:
             first_run = True
-            playsound("assets/assistant_activate.mp3")
+            playsound("assistant_activate.mp3")
 
             while True:
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
                     raise SystemExit
 
                 else:
-                    playsound("assets/assistant_deactivate.mp3")
+                    playsound("assistant_deactivate.mp3")
                     break
 
                 first_run = False
