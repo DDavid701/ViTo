@@ -22,22 +22,31 @@ if GeneralLanguage=='de-DE':
 elif GeneralLanguage=='en-GB':
     jokelanguage='en'
 else:
-    print(TerminalPrefix + " <|> Error 1: Can't define General Language!")
+    print(TerminalPrefix + " <|> Error 0: Can't define General Language!")
     raise SystemExit
 
+if GeneralLanguage=='de-DE':
+    speekvoice=-2
+elif GeneralLanguage=='en-GB':
+    speekvoice=-1
+else:
+    print(TerminalPrefix + " <|> Error 0: Can't define General Language!")
+    raise SystemExit
+
+
 #VersionChecker
-version='beta-0.4' #Dont Edit this!
+version='beta-0.5-pre1' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
 if version==latest_version:
-    print(TerminalPrefix + " <|> This is a Pre-Release Version!")
+    print(TerminalPrefix + " <|> This is a Pre-Release")
 else:
-    print(TerminalPrefix + " <|> This is a Pre-Release Version!")
+    print(TerminalPrefix + " <|> This is a Pre-Release")
 
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
-engine.setProperty("voice", voices[-2].id)
+engine.setProperty("voice", voices[speekvoice].id)
 def speek(line):
     engine.say(line)
     engine.runAndWait()
