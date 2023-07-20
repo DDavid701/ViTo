@@ -46,14 +46,14 @@ else:
 
 
 #VersionChecker
-version='beta-0.5' #Dont Edit this!
+version='beta-0.6-pre1' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
 if version==latest_version:
-    print(TerminalPrefix + " <|> No new Versions are available!")
+    print(TerminalPrefix + " <|> This is a Pre-Release")
 else:
-    print(TerminalPrefix + " <|> A new Version is available!")
+    print(TerminalPrefix + " <|> This is a Pre-Release")
 
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
@@ -99,6 +99,7 @@ if __name__ == "__main__":
     math_minus_answ = os.getenv("MathMinus_answ_" + GeneralLanguage)
     math_minus_err = os.getenv("MathMinus_err_" + GeneralLanguage)
     wikipedia_trigger=os.getenv("Wikipedia_" + GeneralLanguage)
+    wikipedia_message=os.getenv("Wikipedia_message_" + GeneralLanguage)
     shutdown=os.getenv("Shutdown_" + GeneralLanguage)
 
     while True:
@@ -166,7 +167,7 @@ if __name__ == "__main__":
                         break
 
                 if wikipedia_trigger in listened:
-                    speek("What do you want to search?")
+                    speek(wikipedia_message)
                     wp_query=listen()
                     wp_search = wp.summary(wp_query)
                     speek(wp_search)
