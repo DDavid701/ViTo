@@ -26,7 +26,7 @@ else:
     raise SystemExit
 
 #VersionChecker
-version='beta-0.4-pre2' #Dont Edit this!
+version='beta-0.4-pre3' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
@@ -62,7 +62,12 @@ if __name__ == "__main__":
     joke=os.getenv("Joke_" + GeneralLanguage)
     clock=os.getenv("Clock_" + GeneralLanguage)
     date=os.getenv("Date_" + GeneralLanguage)
-    random_int=os.getenv("RanNum_" + GeneralLanguage)
+    random_int_trigger=os.getenv("RanNum_" + GeneralLanguage)
+    random_int_min=os.getenv("RanNum_Min_" + GeneralLanguage)
+    random_int_max=os.getenv("RanNum_Max_" + GeneralLanguage)
+    random_int_gen=os.getenv("RanNum_Gen_" + GeneralLanguage)
+    random_int_is=os.getenv("RanNum_Is_" + GeneralLanguage)
+    random_int_err=os.getenv("RanNum_Err_" + GeneralLanguage)
     shutdown=os.getenv("Shutdown_" + GeneralLanguage)
 
     while True:
@@ -88,19 +93,19 @@ if __name__ == "__main__":
                     speek(datetime.datetime.today())
                     break
 
-                if random_int in listened:
-                    speek("Please say the minimum of the number?")
+                if random_int_trigger in listened:
+                    speek(random_int_min)
                     minimum = listen()
-                    speek("Please say the maximum of the number?")
+                    speek(random_int_max)
                     maximum = listen()
                     print(TerminalPrefix + " <|> " + minimum, maximum)
-                    speek("Random Number is generating...")
+                    speek(random_int_gen)
                     try:
                         generated_number = random.randint(int(minimum), int(maximum))
-                        speek("Your Number is " + str(generated_number))
+                        speek(random_int_is + str(generated_number))
                         break
                     except Exception:
-                        speek("Can't Generate the Number!")
+                        speek(random_int_err)
                         break
 
 
