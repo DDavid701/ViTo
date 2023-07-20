@@ -26,7 +26,7 @@ else:
     raise SystemExit
 
 #VersionChecker
-version='beta-0.4-pre4' #Dont Edit this!
+version='beta-0.4-pre5' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
@@ -58,7 +58,7 @@ def listen():
     return listened.lower()
 
 if __name__ == "__main__":
-    load_dotenv("assets/messages.env")
+    load_dotenv("messages.env")
     joke=os.getenv("Joke_" + GeneralLanguage)
     clock=os.getenv("Clock_" + GeneralLanguage)
     date=os.getenv("Date_" + GeneralLanguage)
@@ -118,7 +118,20 @@ if __name__ == "__main__":
                         speek("The Answer is " + str(math_plus_answer))
                         break
                     except Exception:
-                        speek(f"Error: Can't add '{math_plus_second}' on '{math_plus_first}'")
+                        speek(f"Error: Can't add '{math_plus_second}' on '{math_plus_first}'!")
+                        break
+                    
+                if "minus" in listened_text:
+                    speek("Say the Main Number?")
+                    math_minus_first = listen()
+                    speek("Say the Second Number?")
+                    math_minus_second = listen()
+                    try:
+                        math_minus_answer = int(math_minus_first) - int(math_minus_second)
+                        speek("The Answer is " + str(math_minus_answer))
+                        break
+                    except Exception:
+                        speek(f"Error: Can't divide '{math_minus_first}' with '{math_minus_second}'!")
                         break
 
 
