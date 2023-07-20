@@ -4,12 +4,13 @@ import pyttsx3
 import speech_recognition as sr
 from dotenv import load_dotenv
 from playsound import playsound
+import wikipedia as wp
 import pyjokes as pj
 import random
 import requests
 import os
 os.system("cls")
-load_dotenv("settings.env") #SettingsFile path
+load_dotenv("assets/settings.env") #SettingsFile path
 #Settings
 Username=os.getenv("Username")
 AssistantName=os.getenv("AssistantName")
@@ -33,9 +34,18 @@ else:
     print(TerminalPrefix + " <|> Error 0: Can't define General Language!")
     raise SystemExit
 
+if GeneralLanguage=='de-DE':
+    wp.set_lang("de")
+elif GeneralLanguage=='en-GB':
+    wp.set_lang("en")
+else:
+    print(TerminalPrefix + " <|> Error 0: Can't define General Language!")
+    raise SystemExit
+    
+
 
 #VersionChecker
-version='beta-0.5-pre1' #Dont Edit this!
+version='beta-0.5-pre2' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
@@ -67,7 +77,7 @@ def listen():
     return listened.lower()
 
 if __name__ == "__main__":
-    load_dotenv("messages.env")
+    load_dotenv("assets/messages.env")
     joke=os.getenv("Joke_" + GeneralLanguage)
     clock=os.getenv("Clock_" + GeneralLanguage)
     date=os.getenv("Date_" + GeneralLanguage)
@@ -87,6 +97,7 @@ if __name__ == "__main__":
     math_minus_seco = os.getenv("MathMinus_seco_" + GeneralLanguage)
     math_minus_answ = os.getenv("MathMinus_answ_" + GeneralLanguage)
     math_minus_err = os.getenv("MathMinus_err_" + GeneralLanguage)
+    wikipedia_trigger=os.getenv("Wikipedia_" + GeneralLanguage)
     shutdown=os.getenv("Shutdown_" + GeneralLanguage)
 
     while True:
@@ -95,7 +106,7 @@ if __name__ == "__main__":
 
         if AssistantName in listened:
             first_run = True
-            playsound("assistant_activate.mp3")
+            playsound("assets/assistant_activate.mp3")
 
             while True:
 
@@ -140,7 +151,7 @@ if __name__ == "__main__":
                         speek(f"{math_plus_err}")
                         break
 
-                if math_minus_trigger in listened_text:
+                if math_minus_trigger in listened:
                     speek(math_plus_main)
                     math_minus_first = listen()
                     speek(math_plus_seco)
@@ -153,6 +164,14 @@ if __name__ == "__main__":
                         speek(f"{math_minus_err}")
                         break
 
+                if wikipedia_trigger in listened:
+                    speek("What do you want to search?")
+                    wp_query=listen()
+                    wp_search = wp.summary(wp_query)
+                    speek(wp_search)
+                    break
+
+
 
                 if shutdown in listened:
                     print(TerminalPrefix + " <|> " + shutdown)
@@ -161,7 +180,7 @@ if __name__ == "__main__":
                     raise SystemExit
 
                 else:
-                    playsound("assistant_deactivate.mp3")
+                    playsound("assets/assistant_deactivate.mp3")
                     break
 
                 first_run = False
