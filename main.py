@@ -9,6 +9,7 @@ import pyjokes as pj
 import random
 import requests
 import os
+playsound("assistant_programstart.mp3")
 os.system("cls")
 load_dotenv("settings.env") #SettingsFile path
 #Settings
@@ -41,18 +42,18 @@ elif GeneralLanguage=='en-GB':
 else:
     print(TerminalPrefix + " <|> Error 0: Can't define General Language!")
     raise SystemExit
-    
+
 
 
 #VersionChecker
-version='beta-0.5-pre2' #Dont Edit this!
+version='beta-0.5' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
 if version==latest_version:
-    print(TerminalPrefix + " <|> This is a Pre-Release")
+    print(TerminalPrefix + " <|> No new Versions are available!")
 else:
-    print(TerminalPrefix + " <|> This is a Pre-Release")
+    print(TerminalPrefix + " <|> A new Version is available!")
 
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
