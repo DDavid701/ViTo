@@ -5,14 +5,16 @@ import speech_recognition as sr
 from dotenv import load_dotenv
 from playsound import playsound
 import pyjokes as pj
+import random
 import requests
 import os
 os.system("cls")
-load_dotenv("settings.env") #SettingsFile path
+load_dotenv("assets/settings.env") #SettingsFile path
 #Settings
 Username=os.getenv("Username")
 AssistantName=os.getenv("AssistantName")
 GeneralLanguage=os.getenv("GeneralLanguage")
+TerminalPrefix=os.getenv("TerminalPrefix")
 #Settings
 
 if GeneralLanguage=='de-DE':
@@ -20,18 +22,18 @@ if GeneralLanguage=='de-DE':
 elif GeneralLanguage=='en-GB':
     jokelanguage='en'
 else:
-    print("AssistantV2 <|> Error 1: Can't define General Language!")
+    print(TerminalPrefix + " <|> Error 1: Can't define General Language!")
     raise SystemExit
 
 #VersionChecker
-version='beta-0.3-pre1' #Dont Edit this!
+version='beta-0.4-pre2' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
 if version==latest_version:
-    print("AssistantV2 <|> No new versions available!")
+    print(TerminalPrefix + " <|> This is a Pre-Release Version!")
 else:
-    print("AssistantV2 <|> New version is available, please update the program!")
+    print(TerminalPrefix + " <|> This is a Pre-Release Version!")
 
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
@@ -48,7 +50,7 @@ def listen():
 
     try:
         listened = recognizer.recognize_google(audio, language=GeneralLanguage)
-        print(f"AssistantV2 <|> {listened}")
+        print(f"{TerminalPrefix} <|> {listened}")
     except Exception:
         return "None"
 
@@ -60,6 +62,7 @@ if __name__ == "__main__":
     joke=os.getenv("Joke_" + GeneralLanguage)
     clock=os.getenv("Clock_" + GeneralLanguage)
     date=os.getenv("Date_" + GeneralLanguage)
+    random_int=os.getenv("RanNum_" + GeneralLanguage)
     shutdown=os.getenv("Shutdown_" + GeneralLanguage)
 
     while True:
@@ -68,7 +71,7 @@ if __name__ == "__main__":
 
         if AssistantName in listened:
             first_run = True
-            playsound("assistant_activate.mp3")
+            playsound("assets/assistant_activate.mp3")
 
             while True:
 
@@ -80,19 +83,35 @@ if __name__ == "__main__":
                     clocktime=time.strftime("%H:%M")
                     speek(clocktime)
                     break
-                    
+
                 if date in listened:
                     speek(datetime.datetime.today())
                     break
 
+                if random_int in listened:
+                    speek("Please say the minimum of the number?")
+                    minimum = listen()
+                    speek("Please say the maximum of the number?")
+                    maximum = listen()
+                    print(TerminalPrefix + " <|> " + minimum, maximum)
+                    speek("Random Number is generating...")
+                    try:
+                        generated_number = random.randint(int(minimum), int(maximum))
+                        speek("Your Number is " + str(generated_number))
+                        break
+                    except Exception:
+                        speek("Can't Generate the Number!")
+                        break
+
+
                 if shutdown in listened:
-                    print("AssistantV2 <|> " + shutdown)
+                    print(TerminalPrefix + " <|> " + shutdown)
                     speek(shutdown)
                     time.sleep(0.3)
                     raise SystemExit
 
                 else:
-                    playsound("assistant_deactivate.mp3")
+                    playsound("assets/assistant_deactivate.mp3")
                     break
 
                 first_run = False
