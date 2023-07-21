@@ -9,21 +9,6 @@ import pyjokes as pj
 import random
 import requests
 import os
-
-def note_read():
-    notes = []
-    with open("notes.txt", "r") as file:
-        lines = file.readlines()
-        for line in lines:
-            notes.append(str(line.strip()))
-    if not notes:
-        speek("You don't have any notes yet!")
-        fail=True
-    else:
-        fail=False
-        speek("Your notes are: ")
-        speek(line)
-
 playsound("assets/assistant_programstart.mp3")
 os.system("cls")
 load_dotenv("assets/settings.env") #SettingsFile path
@@ -61,14 +46,14 @@ else:
 
 
 #VersionChecker
-version='beta-0.6-pre3' #Dont Edit this!
+version='beta-0.6' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
 if version==latest_version:
-    print(TerminalPrefix + " <|> This is a Pre-Release")
+    print(TerminalPrefix + " <|> No new Version is available")
 else:
-    print(TerminalPrefix + " <|> This is a Pre-Release")
+    print(TerminalPrefix + f" <|> A new version is available! ({latest_version})")
 
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
@@ -115,6 +100,17 @@ if __name__ == "__main__":
     math_minus_err = os.getenv("MathMinus_err_" + GeneralLanguage)
     wikipedia_trigger=os.getenv("Wikipedia_" + GeneralLanguage)
     wikipedia_message=os.getenv("Wikipedia_message_" + GeneralLanguage)
+    note_add_trigger=os.getenv("Notes_Add_" + GeneralLanguage)
+    note_add_msg1=os.getenv("Notes_Add_msg1_" + GeneralLanguage)
+    note_add_msg2=os.getenv("Notes_Add_msg2_" + GeneralLanguage)
+    note_rem_trigger=os.getenv("Notes_Rem_" + GeneralLanguage)
+    note_rem_msg1 = os.getenv("Notes_Rem_msg1_" + GeneralLanguage)
+    note_rem_msg2 = os.getenv("Notes_Rem_msg2_" + GeneralLanguage)
+    note_rem_msg3 = os.getenv("Notes_Rem_msg3_" + GeneralLanguage)
+    note_read_trigger=os.getenv("Notes_Read_" + GeneralLanguage)
+    note_read_msg1 = os.getenv("Notes_Read_msg1_" + GeneralLanguage)
+    note_read_msg2 = os.getenv("Notes_Read_msg2_" + GeneralLanguage)
+    note_read_msg3 = os.getenv("Notes_Read_msg3_" + GeneralLanguage)
     shutdown=os.getenv("Shutdown_" + GeneralLanguage)
 
     while True:
@@ -188,36 +184,7 @@ if __name__ == "__main__":
                     speek(wp_search)
                     break
 
-                if "note add" in listened:
-                    speek("What do you want to add?")
-                    listened_item=listen()
-                    print(listened_item)
-                    with open("notes.txt", "a") as addfile:
-                        addfile.write(str(listened_item) + "\n")
-                        break
-
-                if "note remove" in listened:
-                    note_read()
-                    speek("Which note do you want to remove?")
-                    note_to_remove = listen()
-                    with open("notes.txt", "r") as file:
-                        lines = file.readlines()
-
-                    with open("notes.txt", "w") as file:
-                        removed = False
-                        for line in lines:
-                            note = line.strip()
-                            if note == note_to_remove:
-                                removed = True
-                            else:
-                                file.write(line)
-
-                    if removed:
-                        speek("Note removed successfully!")
-                    else:
-                        speek("Note not found!")
-
-                if "note read" in listened:
+                def note_read():
                     notes = []
                     with open("notes.txt", "r") as file:
                         lines = file.readlines()
@@ -228,7 +195,47 @@ if __name__ == "__main__":
                     else:
                         speek("Your notes are: ")
                         speek(line)
-                        speek("if you want to add notes say 'vito add a note!'")
+
+                if note_add_trigger in listened:
+                    speek(note_add_msg1)
+                    listened_item=listen()
+                    with open("notes.txt", "a") as addfile:
+                        addfile.write(str(listened_item) + "\n")
+                        speek(note_add_msg2)
+                        break
+
+                if note_rem_trigger in listened:
+                    note_read()
+                    speek(note_rem_msg1)
+                    note_to_remove = listen()
+                    with open("notes.txt", "r") as file:
+                        lines = file.readlines()
+
+                    with open("notes.txt", "w") as remfile:
+                        removed = False
+                        for line in lines:
+                            note = line.strip()
+                            if note == note_to_remove:
+                                removed = True
+                            else:
+                                remfile.write(line)
+                    if removed:
+                        speek(note_rem_msg2)
+                    else:
+                        speek(note_rem_msg3)
+
+                if note_read_trigger in listened:
+                    notes = []
+                    with open("notes.txt", "r") as readfile:
+                        lines = readfile.readlines()
+                        for line in lines:
+                            notes.append(str(line.strip()))
+                    if not notes:
+                        speek(note_read_msg1)
+                        speek(note_read_msg2)
+                    else:
+                        speek(note_read_msg3)
+                        speek(line)
 
                 if shutdown in listened:
                     print(TerminalPrefix + " <|> " + shutdown)
