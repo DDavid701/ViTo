@@ -46,14 +46,14 @@ else:
 
 
 #VersionChecker
-version='beta-0.6-pre2' #Dont Edit this!
-url = 'https://pastebin.com/raw/RmfvMed7'
+version='master-0.5.1' #Dont Edit this!
+url = 'https://pastebin.com/raw/K81hR80A'
 request_latest = requests.get(url)
 latest_version = request_latest.text
 if version==latest_version:
-    print(TerminalPrefix + " <|> This is a Pre-Release (Unstable)")
+    print(TerminalPrefix + " <|> No new Versions available! (Master)")
 else:
-    print(TerminalPrefix + " <|> This is a Pre-Release (Unstable)")
+    print(TerminalPrefix + " <|> No new Versions available! (Master)")
 
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
@@ -172,27 +172,6 @@ if __name__ == "__main__":
                     wp_search = wp.summary(wp_query)
                     speek(wp_search)
                     break
-
-                if "note add" in listened:
-                    speek("What do you want to add?")
-                    listened_item=listen()
-                    print(listened_item)
-                    with open("notes.txt", "a") as addfile:
-                        addfile.write(str(listened_item) + "\n")
-                        break
-
-                if "note read" in listened:
-                    notes = []
-                    with open("notes.txt", "r") as file:
-                        lines = file.readlines()
-                        for line in lines:
-                            notes.append(str(line.strip()))
-                    if not notes:
-                        speek("You don't have any notes yet!")
-                    else:
-                        speek("Your notes are: ")
-                        speek(line)
-                        speek("if you want to add notes say 'vito add a note!'")
 
                 if shutdown in listened:
                     print(TerminalPrefix + " <|> " + shutdown)
