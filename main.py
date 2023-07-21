@@ -9,6 +9,21 @@ import pyjokes as pj
 import random
 import requests
 import os
+
+def note_read():
+    notes = []
+    with open("notes.txt", "r") as file:
+        lines = file.readlines()
+        for line in lines:
+            notes.append(str(line.strip()))
+    if not notes:
+        speek("You don't have any notes yet!")
+        fail=True
+    else:
+        fail=False
+        speek("Your notes are: ")
+        speek(line)
+
 playsound("assistant_programstart.mp3")
 os.system("cls")
 load_dotenv("settings.env") #SettingsFile path
@@ -46,14 +61,14 @@ else:
 
 
 #VersionChecker
-version='beta-0.6-pre2' #Dont Edit this!
+version='beta-0.6-pre3' #Dont Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
 if version==latest_version:
-    print(TerminalPrefix + " <|> This is a Pre-Release (Unstable)")
+    print(TerminalPrefix + " <|> This is a Pre-Release")
 else:
-    print(TerminalPrefix + " <|> This is a Pre-Release (Unstable)")
+    print(TerminalPrefix + " <|> This is a Pre-Release")
 
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
@@ -72,7 +87,7 @@ def listen():
         listened = recognizer.recognize_google(audio, language=GeneralLanguage)
         print(f"{TerminalPrefix} <|> {listened}")
     except Exception:
-        return "None"
+        return ""
 
 
     return listened.lower()
@@ -180,6 +195,27 @@ if __name__ == "__main__":
                     with open("notes.txt", "a") as addfile:
                         addfile.write(str(listened_item) + "\n")
                         break
+
+                if "note remove" in listened:
+                    note_read()
+                    speek("Which note do you want to remove?")
+                    note_to_remove = listen()
+                    with open("notes.txt", "r") as file:
+                        lines = file.readlines()
+
+                    with open("notes.txt", "w") as file:
+                        removed = False
+                        for line in lines:
+                            note = line.strip()
+                            if note == note_to_remove:
+                                removed = True
+                            else:
+                                file.write(line)
+
+                    if removed:
+                        speek("Note removed successfully!")
+                    else:
+                        speek("Note not found!")
 
                 if "note read" in listened:
                     notes = []
