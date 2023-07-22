@@ -4,6 +4,7 @@ import pyttsx3
 import speech_recognition as sr
 from dotenv import load_dotenv
 from playsound import playsound
+from threading import Thread
 import wikipedia as wp
 import pyjokes as pj
 import random
@@ -46,14 +47,14 @@ else:
 
 
 #VersionChecker
-version='beta-0.6' #Dont Edit this!
+version='beta-0.7-pre1' #don't Edit this!
 url = 'https://pastebin.com/raw/RmfvMed7'
 request_latest = requests.get(url)
 latest_version = request_latest.text
 if version==latest_version:
-    print(TerminalPrefix + " <|> No new Version is available")
+    print(TerminalPrefix + " <|> This is a Pre-Release version!")
 else:
-    print(TerminalPrefix + f" <|> A new version is available! ({latest_version})")
+    print(TerminalPrefix + " <|> This is a Pre-Release version!")
 
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
@@ -61,13 +62,11 @@ engine.setProperty("voice", voices[speekvoice].id)
 def speek(line):
     engine.say(line)
     engine.runAndWait()
-
 def listen():
     recognizer = sr.Recognizer()
     with sr.Microphone() as mic:
         recognizer.adjust_for_ambient_noise(mic, duration=0.2)
         audio = recognizer.listen(mic)
-
     try:
         listened = recognizer.recognize_google(audio, language=GeneralLanguage)
         print(f"{TerminalPrefix} <|> {listened}")
@@ -81,7 +80,9 @@ if __name__ == "__main__":
     load_dotenv("assets/messages.env")
     joke=os.getenv("Joke_" + GeneralLanguage)
     clock=os.getenv("Clock_" + GeneralLanguage)
+    clock_message=os.getenv("Clock_msg_" + GeneralLanguage)
     date=os.getenv("Date_" + GeneralLanguage)
+    date_message=os.getenv("Date_msg_" + GeneralLanguage)
     random_int_trigger=os.getenv("RanNum_" + GeneralLanguage)
     random_int_min=os.getenv("RanNum_Min_" + GeneralLanguage)
     random_int_max=os.getenv("RanNum_Max_" + GeneralLanguage)
@@ -100,6 +101,7 @@ if __name__ == "__main__":
     math_minus_err = os.getenv("MathMinus_err_" + GeneralLanguage)
     wikipedia_trigger=os.getenv("Wikipedia_" + GeneralLanguage)
     wikipedia_message=os.getenv("Wikipedia_message_" + GeneralLanguage)
+    wikipedia_message2=os.getenv("Wikipedia_message2_" + GeneralLanguage)
     note_add_trigger=os.getenv("Notes_Add_" + GeneralLanguage)
     note_add_msg1=os.getenv("Notes_Add_msg1_" + GeneralLanguage)
     note_add_msg2=os.getenv("Notes_Add_msg2_" + GeneralLanguage)
@@ -111,6 +113,7 @@ if __name__ == "__main__":
     note_read_msg1 = os.getenv("Notes_Read_msg1_" + GeneralLanguage)
     note_read_msg2 = os.getenv("Notes_Read_msg2_" + GeneralLanguage)
     note_read_msg3 = os.getenv("Notes_Read_msg3_" + GeneralLanguage)
+    timer_trigger = "timer"
     shutdown=os.getenv("Shutdown_" + GeneralLanguage)
 
     while True:
@@ -129,11 +132,12 @@ if __name__ == "__main__":
 
                 if clock in listened:
                     clocktime=time.strftime("%H:%M")
-                    speek(clocktime)
+                    speek(clock_message + clocktime)
                     break
 
                 if date in listened:
-                    speek(datetime.datetime.today())
+                    date_today = datetime.datetime.today()
+                    speek(date_message + date_today)
                     break
 
                 if random_int_trigger in listened:
@@ -178,11 +182,18 @@ if __name__ == "__main__":
                         break
 
                 if wikipedia_trigger in listened:
+                    def wp_search_func():
+                        speek(wp_search)
                     speek(wikipedia_message)
                     wp_query=listen()
-                    wp_search = wp.summary(wp_query)
-                    speek(wp_search)
-                    break
+                    try:
+                        wp_search = wp.summary(wp_query)
+                        thread_wp_1 = Thread(target=wp_search_func)
+                        thread_wp_1.start()
+                        break
+                    except wikipedia.exceptions.PageError:
+                        speek(f"{wp_query}" + wikipedia_message2)
+                        break
 
                 def note_read():
                     notes = []
@@ -236,6 +247,35 @@ if __name__ == "__main__":
                     else:
                         speek(note_read_msg3)
                         speek(line)
+
+
+                def atimer(amount, sec_or_min):
+                    if sec_or_min == 'min':
+                        time.sleep(int(amount) * 60)
+                        playsound("assets/assistant_timer_ringtone.mp3"),playsound("assets/assistant_timer_ringtone.mp3"),playsound("assets/assistant_timer_ringtone.mp3"),playsound("assets/assistant_timer_ringtone.mp3"),playsound("assets/assistant_timer_ringtone.mp3")
+                    elif sec_or_min == 'sec':
+                        time.sleep(int(amount))
+                        playsound("assets/assistant_timer_ringtone.mp3"), playsound("assets/assistant_timer_ringtone.mp3"), playsound("assets/assistant_timer_ringtone.mp3"), playsound("assets/assistant_timer_ringtone.mp3"),playsound("assets/assistant_timer_ringtone.mp3")
+                    else:
+                        print("")
+
+                if timer_trigger in listened:
+                    speek("Minutes or seconds?")
+                    atimer_listen = listen()
+                    if "min" in atimer_listen:
+                        speek("how many?")
+                        atimer_listen2 = listen()
+                        testthr = Thread(target=atimer, args=(atimer_listen2, "min"))
+                        testthr.start()
+                        break
+                    elif "sek" in atimer_listen:
+                        speek("how many?")
+                        atimer_listen2 = listen()
+                        testthr = Thread(target=atimer, args=(atimer_listen2, "sec"))
+                        testthr.start()
+                    else:
+                        speek("Can't Understand!")
+                        break
 
                 if shutdown in listened:
                     print(TerminalPrefix + " <|> " + shutdown)
