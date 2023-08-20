@@ -1,8 +1,8 @@
 # ViTo
 ViTo (v2) is a Voice Assistant programmed with Python!
 
-# New Release 0.6.0Beta!
+# New Release beta-0.6.0!
 
 
-# Raspberry Pi Version
+# Raspberry Pi Version (Alpha)
 PiSource: ***https://github.com/PiSourceDE/ViTo-for-RPI***
