@@ -10,7 +10,11 @@ import pyjokes as pj
 import random
 import requests
 import os
-playsound("assets/assistant_programstart.mp3")
+def ringtone():
+    count = 0
+    while (count < 5):
+        count = count + 1
+        playsound("assets/assistant_timer_ringtone.mp3")
 os.system("cls")
 load_dotenv("assets/settings.env") #SettingsFile path
 #Settings
@@ -47,8 +51,8 @@ else:
 
 
 #VersionChecker
-version='beta-0.7-pre1' #don't Edit this!
-url = 'https://pastebin.com/raw/RmfvMed7'
+version='beta-0.7-pre2' #don't edit this!
+url = 'https://pastebin.com/raw/RmfvMed7' #don't edit this unless you're using a fork version!
 request_latest = requests.get(url)
 latest_version = request_latest.text
 if version==latest_version:
@@ -113,7 +117,12 @@ if __name__ == "__main__":
     note_read_msg1 = os.getenv("Notes_Read_msg1_" + GeneralLanguage)
     note_read_msg2 = os.getenv("Notes_Read_msg2_" + GeneralLanguage)
     note_read_msg3 = os.getenv("Notes_Read_msg3_" + GeneralLanguage)
-    timer_trigger = "timer"
+    timer_trigger = os.getenv("Timer_Trigger_" + GeneralLanguage)
+    timer_msg1 = os.getenv("Timer_msg1_" + GeneralLanguage)
+    timer_msg2 = os.getenv("Timer_msg2_" + GeneralLanguage)
+    timer_msg3 = os.getenv("Timer_msg3_" + GeneralLanguage)
+    timer_set_min = os.getenv("Timer_set_min_" + GeneralLanguage)
+    timer_set_sec = os.getenv("Timer_set_sec_" + GeneralLanguage)
     shutdown=os.getenv("Shutdown_" + GeneralLanguage)
 
     while True:
@@ -202,9 +211,10 @@ if __name__ == "__main__":
                         for line in lines:
                             notes.append(str(line.strip()))
                     if not notes:
-                        speek("You don't have any notes yet!")
+                        speek(note_read_msg1)
+                        speek(note_read_msg2)
                     else:
-                        speek("Your notes are: ")
+                        speek(note_read_msg3)
                         speek(line)
 
                 if note_add_trigger in listened:
@@ -248,33 +258,34 @@ if __name__ == "__main__":
                         speek(note_read_msg3)
                         speek(line)
 
-
                 def atimer(amount, sec_or_min):
                     if sec_or_min == 'min':
+                        speek(f'{timer_set_min}')
                         time.sleep(int(amount) * 60)
-                        playsound("assets/assistant_timer_ringtone.mp3"),playsound("assets/assistant_timer_ringtone.mp3"),playsound("assets/assistant_timer_ringtone.mp3"),playsound("assets/assistant_timer_ringtone.mp3"),playsound("assets/assistant_timer_ringtone.mp3")
+                        ringtone()
                     elif sec_or_min == 'sec':
+                        speek(f'{timer_set_sec}')
                         time.sleep(int(amount))
-                        playsound("assets/assistant_timer_ringtone.mp3"), playsound("assets/assistant_timer_ringtone.mp3"), playsound("assets/assistant_timer_ringtone.mp3"), playsound("assets/assistant_timer_ringtone.mp3"),playsound("assets/assistant_timer_ringtone.mp3")
+                        ringtone()
                     else:
-                        print("")
+                        print("Error 1: The Program has a issue please report this!")
 
                 if timer_trigger in listened:
-                    speek("Minutes or seconds?")
+                    speek(timer_msg1)
                     atimer_listen = listen()
                     if "min" in atimer_listen:
-                        speek("how many?")
+                        speek(timer_msg2)
                         atimer_listen2 = listen()
                         testthr = Thread(target=atimer, args=(atimer_listen2, "min"))
                         testthr.start()
                         break
                     elif "sek" in atimer_listen:
-                        speek("how many?")
+                        speek(timer_msg2)
                         atimer_listen2 = listen()
                         testthr = Thread(target=atimer, args=(atimer_listen2, "sec"))
                         testthr.start()
                     else:
-                        speek("Can't Understand!")
+                        speek(timer_msg3)
                         break
 
                 if shutdown in listened:
