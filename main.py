@@ -10,11 +10,33 @@ import pyjokes as pj
 import random
 import requests
 import os
+from colorama import *
+init(autoreset=True)
+
+def ErrorCode(error):
+    if error == 0:
+        print(Fore.LIGHTRED_EX + "[!] Error 0: Can't define General Language!")
+    elif error == 1:
+        print(Fore.LIGHTRED_EX + "[!] Error 1: The Program has an unknown issue! Please Report this!")
+    elif error == 2:
+        print(Fore.LIGHTRED_EX + "[!] Error 2: 'playsound' Library ran into an Error!")
+    elif error == 3:
+        print(Fore.LIGHTRED_EX + "[!] Error 3: Text to Speech Library ran into an Error!")
+    elif error == 4:
+        print(Fore.LIGHTRED_EX + "[!] Error 4: SpeechRecognition ran into an Error!")
+    elif error == 5:
+        print(Fore.LIGHTRED_EX + "[!] This Language is still in development!")
+    else:
+        print(Fore.RED + "[!] Error -1: An Fatal Error occurred! (Please Report this Issue.)")
 def ringtone():
     count = 0
     while (count < 5):
         count = count + 1
-        playsound("assets/assistant_timer_ringtone.mp3")
+        try:
+            playsound("assets/assistant_timer_ringtone.mp3")
+        except Exception:
+            ErrorCode(2)
+            break
 os.system("cls")
 load_dotenv("assets/settings.env") #SettingsFile path
 #Settings
@@ -28,30 +50,39 @@ if GeneralLanguage=='de-DE':
     jokelanguage='de'
 elif GeneralLanguage=='en-GB':
     jokelanguage='en'
+elif GeneralLanguage=='en-US':
+    ErrorCode(5)
+    raise SystemExit
 else:
-    print(TerminalPrefix + " <|> Error 0: Can't define General Language!")
+    ErrorCode(0)
     raise SystemExit
 
 if GeneralLanguage=='de-DE':
     speekvoice=-2
 elif GeneralLanguage=='en-GB':
     speekvoice=-1
+elif GeneralLanguage=='en-US':
+    ErrorCode(5)
+    raise SystemExit
 else:
-    print(TerminalPrefix + " <|> Error 0: Can't define General Language!")
+    ErrorCode(0)
     raise SystemExit
 
 if GeneralLanguage=='de-DE':
     wp.set_lang("de")
 elif GeneralLanguage=='en-GB':
     wp.set_lang("en")
+elif GeneralLanguage=='en-US':
+    ErrorCode(5)
+    raise SystemExit
 else:
-    print(TerminalPrefix + " <|> Error 0: Can't define General Language!")
+    ErrorCode(0)
     raise SystemExit
 
 
 
 #VersionChecker
-version='beta-0.7-pre2' #don't edit this!
+version='beta-0.7-pre3' #don't edit this!
 url = 'https://pastebin.com/raw/RmfvMed7' #don't edit this unless you're using a fork version!
 request_latest = requests.get(url)
 latest_version = request_latest.text
@@ -59,23 +90,29 @@ if version==latest_version:
     print(TerminalPrefix + " <|> This is a Pre-Release version!")
 else:
     print(TerminalPrefix + " <|> This is a Pre-Release version!")
-
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
 engine.setProperty("voice", voices[speekvoice].id)
 def speek(line):
-    engine.say(line)
-    engine.runAndWait()
-def listen():
-    recognizer = sr.Recognizer()
-    with sr.Microphone() as mic:
-        recognizer.adjust_for_ambient_noise(mic, duration=0.2)
-        audio = recognizer.listen(mic)
     try:
-        listened = recognizer.recognize_google(audio, language=GeneralLanguage)
-        print(f"{TerminalPrefix} <|> {listened}")
+        engine.say(line)
+        engine.runAndWait()
     except Exception:
-        return ""
+        ErrorCode(3)
+        raise SystemExit
+def listen():
+    try:
+        recognizer = sr.Recognizer()
+        with sr.Microphone() as mic:
+            recognizer.adjust_for_ambient_noise(mic, duration=0.2)
+            audio = recognizer.listen(mic)
+        try:
+            listened = recognizer.recognize_google(audio, language=GeneralLanguage)
+            print(f"{TerminalPrefix} <|> {listened}")
+        except Exception:
+            return ""
+    except Exception:
+        raise SystemExit
 
 
     return listened.lower()
@@ -131,7 +168,12 @@ if __name__ == "__main__":
 
         if AssistantName in listened:
             first_run = True
-            playsound("assets/assistant_activate.mp3")
+            try:
+                playsound("assets/assistant_activate.mp3")
+            except Exception:
+                ErrorCode(2)
+                break
+
 
             while True:
 
@@ -201,8 +243,10 @@ if __name__ == "__main__":
                         thread_wp_1.start()
                         break
                     except wikipedia.exceptions.PageError:
+                        print("Error!")
                         speek(f"{wp_query}" + wikipedia_message2)
                         break
+
 
                 def note_read():
                     notes = []
@@ -268,7 +312,7 @@ if __name__ == "__main__":
                         time.sleep(int(amount))
                         ringtone()
                     else:
-                        print("Error 1: The Program has a issue please report this!")
+                        print("Error 1: The Program has an unknown issue! Please Report this!")
 
                 if timer_trigger in listened:
                     speek(timer_msg1)
@@ -289,14 +333,18 @@ if __name__ == "__main__":
                         break
 
                 if shutdown in listened:
-                    print(TerminalPrefix + " <|> " + shutdown)
+                    print(Fore.RED + TerminalPrefix + " <|> " + shutdown)
                     speek(shutdown)
                     time.sleep(0.3)
                     raise SystemExit
 
                 else:
-                    playsound("assets/assistant_deactivate.mp3")
-                    break
+                    try:
+                        playsound("assets/assistant_deactivate.mp3")
+                        break
+                    except Exception:
+                        ErrorCode(2)
+                        break
 
                 first_run = False
                 listened = listen()
