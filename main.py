@@ -12,7 +12,15 @@ import requests
 import os
 from colorama import *
 init(autoreset=True)
-
+print(Fore.GREEN + """
+__      ___ _______    
+\ \    / (_)__   __|   
+ \ \  / / _   | | ___  
+  \ \/ / | |  | |/ _ \ 
+   \  /  | |  | | (_) |
+    \/   |_|  |_|\___/                
+""" + Fore.LIGHTGREEN_EX + "[ViTo beta-0.7.0] made by DZYT002")
+print("Github: " + Fore.LIGHTBLUE_EX + "https://github.com/DZYT002/ViTo")
 def ErrorCode(error):
     if error == 0:
         print(Fore.LIGHTRED_EX + "[!] Error 0: Can't define General Language!")
@@ -25,7 +33,9 @@ def ErrorCode(error):
     elif error == 4:
         print(Fore.LIGHTRED_EX + "[!] Error 4: SpeechRecognition ran into an Error!")
     elif error == 5:
-        print(Fore.LIGHTRED_EX + "[!] This Language is still in development!")
+        print(Fore.LIGHTRED_EX + "[!] Error 5: This Language is still in development!")
+    elif error == 6:
+        print(Fore.LIGHTRED_EX + "[!] Error 6: Can't Connect with the Internet!")
     else:
         print(Fore.RED + "[!] Error -1: An Fatal Error occurred! (Please Report this Issue.)")
 def ringtone():
@@ -79,17 +89,27 @@ else:
     ErrorCode(0)
     raise SystemExit
 
+#Testing
+url = 'https://google.com/'
+request_internet = requests.get(url)
+if request_internet.status_code == 200:
+    print(f"{TerminalPrefix} <|>"+Fore.GREEN+" Connected with the Internet!")
+else:
+    print(f"[!] The Status Code is {request_internet.status_code}")
+    ErrorCode(6)
+    raise SystemExit
 
 
 #VersionChecker
-version='beta-0.7-pre3' #don't edit this!
+version='beta-0.7' #don't edit this!
 url = 'https://pastebin.com/raw/RmfvMed7' #don't edit this unless you're using a fork version!
 request_latest = requests.get(url)
 latest_version = request_latest.text
 if version==latest_version:
-    print(TerminalPrefix + " <|> This is a Pre-Release version!")
+    print(Fore.LIGHTGREEN_EX + TerminalPrefix + " <|> There's no new Version available!")
 else:
-    print(TerminalPrefix + " <|> This is a Pre-Release version!")
+    print(Fore.LIGHTRED_EX + TerminalPrefix + f" <|> There's a new Version available! [{latest_version}]")
+
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
 engine.setProperty("voice", voices[speekvoice].id)
