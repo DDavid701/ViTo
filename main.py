@@ -3,7 +3,8 @@ import time
 import pyttsx3
 import speech_recognition as sr
 from dotenv import load_dotenv
-from playsound import playsound
+#from playsound import playsound
+from slib.pylog import msg
 from threading import Thread
 import wikipedia as wp
 import pyjokes as pj
@@ -12,48 +13,41 @@ import requests
 import os
 from colorama import *
 init(autoreset=True)
-print(Fore.GREEN + """
-__      ___ _______    
-\ \    / (_)__   __|   
- \ \  / / _   | | ___  
-  \ \/ / | |  | |/ _ \ 
-   \  /  | |  | | (_) |
-    \/   |_|  |_|\___/                
-""" + Fore.LIGHTGREEN_EX + "[ViTo beta-0.7.0] made by DZYT002")
-print("Github: " + Fore.LIGHTBLUE_EX + "https://github.com/DZYT002/ViTo")
+print("[*] ViTo 1.0 by DDavid701")
+print("[*] Github: " + Fore.LIGHTBLUE_EX + "https://github.com/DDavid701/ViTo")
 def ErrorCode(error):
     if error == 0:
-        print(Fore.LIGHTRED_EX + "[!] Error 0: Can't define General Language!")
+        msg("error", "Error 0: Can't define General Language!")
     elif error == 1:
-        print(Fore.LIGHTRED_EX + "[!] Error 1: The Program has an unknown issue! Please Report this!")
+        msg("error", "Error 1: The Program has an unknown issue! Please Report this!")
     elif error == 2:
-        print(Fore.LIGHTRED_EX + "[!] Error 2: 'playsound' Library ran into an Error!")
+        msg("error", "Error 2: 'playsound' Library ran into an Error!")
     elif error == 3:
-        print(Fore.LIGHTRED_EX + "[!] Error 3: Text to Speech Library ran into an Error!")
+        msg("error", "Error 3: Text to Speech Library ran into an Error!")
     elif error == 4:
-        print(Fore.LIGHTRED_EX + "[!] Error 4: SpeechRecognition ran into an Error!")
+        msg("error","Error 4: SpeechRecognition ran into an Error!")
     elif error == 5:
-        print(Fore.LIGHTRED_EX + "[!] Error 5: This Language is still in development!")
+        msg("error", "Error 5: This Language is still in development!")
     elif error == 6:
-        print(Fore.LIGHTRED_EX + "[!] Error 6: Can't Connect with the Internet!")
+        msg("error", "Error 6: Can't Connect with the Internet!")
     else:
-        print(Fore.RED + "[!] Error -1: An Fatal Error occurred! (Please Report this Issue.)")
+        msg("error", "Error -1: An Fatal Error occurred! (Please Report this Issue.)")
 def ringtone():
     count = 0
     while (count < 5):
         count = count + 1
         try:
-            playsound("assets/assistant_timer_ringtone.mp3")
+            pass
+            #playsound("assets/assistant_timer_ringtone.mp3")
         except Exception:
             ErrorCode(2)
             break
-os.system("cls")
-load_dotenv("assets/settings.env") #SettingsFile path
+#os.system("cls")
+load_dotenv("conf/settings.env") #SettingsFile path
 #Settings
 Username=os.getenv("Username")
 AssistantName=os.getenv("AssistantName")
 GeneralLanguage=os.getenv("GeneralLanguage")
-TerminalPrefix=os.getenv("TerminalPrefix")
 #Settings
 
 if GeneralLanguage=='de-DE':
@@ -93,9 +87,9 @@ else:
 url = 'https://google.com/'
 request_internet = requests.get(url)
 if request_internet.status_code == 200:
-    print(f"{TerminalPrefix} <|>"+Fore.GREEN+" Connected with the Internet!")
+    msg("log", "Connected with the Internet!")
 else:
-    print(f"[!] The Status Code is {request_internet.status_code}")
+    msg("warning", f"The Status Code is {request_internet.status_code}")
     ErrorCode(6)
     raise SystemExit
 
@@ -106,11 +100,20 @@ url = 'https://pastebin.com/raw/RmfvMed7' #don't edit this unless you're using a
 request_latest = requests.get(url)
 latest_version = request_latest.text
 if version==latest_version:
-    print(Fore.LIGHTGREEN_EX + TerminalPrefix + " <|> There's no new Version available!")
+    msg("log", "There's no new Version available!")
 else:
-    print(Fore.LIGHTRED_EX + TerminalPrefix + f" <|> There's a new Version available! [{latest_version}]")
+    msg("warning", f"There's a new Version available! [{latest_version}]")
 
-engine = pyttsx3.init("sapi5")
+PLATFORM="Linux"
+
+if PLATFORM=="Windows":
+    engine = pyttsx3.init("sapi5")
+elif PLATFORM=="MacOS":
+    engine = pyttsx3.init("espeak")
+elif PLATFORM=="Linux":
+    engine = pyttsx3.init("espeak")
+else:
+    engine = pyttsx3.init("espeak")
 voices = engine.getProperty("voices")
 engine.setProperty("voice", voices[speekvoice].id)
 def speek(line):
@@ -128,17 +131,19 @@ def listen():
             audio = recognizer.listen(mic)
         try:
             listened = recognizer.recognize_google(audio, language=GeneralLanguage)
-            print(f"{TerminalPrefix} <|> {listened}")
+            msg("log", f"{listened}")
         except Exception:
             return ""
-    except Exception:
+    except Exception as e:
+        msg("log", f"{e}")
+        time.sleep(5)
         raise SystemExit
 
 
-    return listened.lower()
+    return listened
 
 if __name__ == "__main__":
-    load_dotenv("assets/messages.env")
+    load_dotenv("conf/messages.env")
     joke=os.getenv("Joke_" + GeneralLanguage)
     clock=os.getenv("Clock_" + GeneralLanguage)
     clock_message=os.getenv("Clock_msg_" + GeneralLanguage)
@@ -181,6 +186,7 @@ if __name__ == "__main__":
     timer_set_min = os.getenv("Timer_set_min_" + GeneralLanguage)
     timer_set_sec = os.getenv("Timer_set_sec_" + GeneralLanguage)
     shutdown=os.getenv("Shutdown_" + GeneralLanguage)
+    msg("log", f"Loaded Language {GeneralLanguage}")
 
     while True:
 
@@ -189,7 +195,8 @@ if __name__ == "__main__":
         if AssistantName in listened:
             first_run = True
             try:
-                playsound("assets/assistant_activate.mp3")
+                pass
+                #playsound("assets/assistant_activate.mp3")
             except Exception:
                 ErrorCode(2)
                 break
@@ -216,7 +223,7 @@ if __name__ == "__main__":
                     minimum = listen()
                     speek(random_int_max)
                     maximum = listen()
-                    print(TerminalPrefix + " <|> " + minimum, maximum)
+                    msg("log", f"{minimum}, {maximum}")
                     speek(random_int_gen)
                     try:
                         generated_number = random.randint(int(minimum), int(maximum))
@@ -263,7 +270,7 @@ if __name__ == "__main__":
                         thread_wp_1.start()
                         break
                     except wikipedia.exceptions.PageError:
-                        print("Error!")
+                        msg("warning", "PAGE ERROR: Couldn't load page!")
                         speek(f"{wp_query}" + wikipedia_message2)
                         break
 
@@ -332,7 +339,7 @@ if __name__ == "__main__":
                         time.sleep(int(amount))
                         ringtone()
                     else:
-                        print("Error 1: The Program has an unknown issue! Please Report this!")
+                        ErrorCode(-1)
 
                 if timer_trigger in listened:
                     speek(timer_msg1)
@@ -353,14 +360,15 @@ if __name__ == "__main__":
                         break
 
                 if shutdown in listened:
-                    print(Fore.RED + TerminalPrefix + " <|> " + shutdown)
+                    msg("log", f"{shutdown}")
                     speek(shutdown)
                     time.sleep(0.3)
                     raise SystemExit
 
                 else:
                     try:
-                        playsound("assets/assistant_deactivate.mp3")
+                        pass
+                        #playsound("assets/assistant_deactivate.mp3")
                         break
                     except Exception:
                         ErrorCode(2)
