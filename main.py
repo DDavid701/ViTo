@@ -2,9 +2,9 @@ import datetime
 import time
 import pyttsx3
 import speech_recognition as sr
+import platform
 from dotenv import load_dotenv
 #from playsound import playsound
-from slib.pylog import msg
 from threading import Thread
 import wikipedia as wp
 import pyjokes as pj
@@ -13,8 +13,21 @@ import requests
 import os
 from colorama import *
 init(autoreset=True)
-print("[*] ViTo 1.0 by DDavid701")
-print("[*] Github: " + Fore.LIGHTBLUE_EX + "https://github.com/DDavid701/ViTo")
+def msg(type,content):
+    if type=="log":
+        print(Fore.GREEN + "ViTo" + Fore.LIGHTBLACK_EX + " × " + Fore.LIGHTWHITE_EX + content)
+    elif type=="error":
+        print(Fore.GREEN+"ViTo"+Fore.LIGHTBLACK_EX+" × "+Fore.LIGHTRED_EX+content)
+    elif type=="warning":
+        print(Fore.GREEN + "ViTo" + Fore.LIGHTBLACK_EX + " × " + Fore.LIGHTYELLOW_EX + content)
+    else:
+        print(Fore.GREEN + "ViTo" + Fore.LIGHTBLACK_EX + " × " + Fore.RED + "Couldn't recognise message type! " + Fore.WHITE + "(" + Fore.LIGHTRED_EX+type+Fore.WHITE+")")
+
+print(Fore.LIGHTBLACK_EX+"["+Fore.YELLOW+"*"+Fore.LIGHTBLACK_EX+"] "+Fore.LIGHTWHITE_EX+"ViTo 1.0 by DDavid701")
+print(Fore.LIGHTBLACK_EX+"["+Fore.YELLOW+"*"+Fore.LIGHTBLACK_EX+"] "+Fore.LIGHTBLUE_EX+"https://github.com/DDavid701/ViTo")
+PLATFORM=platform.system()
+msg("log", f"Operating System Detected: '{PLATFORM}'")
+
 def ErrorCode(error):
     if error == 0:
         msg("error", "Error 0: Can't define General Language!")
@@ -42,7 +55,8 @@ def ringtone():
         except Exception:
             ErrorCode(2)
             break
-#os.system("cls")
+if PLATFORM=="Windows":
+    os.system("cls")
 load_dotenv("conf/settings.env") #SettingsFile path
 #Settings
 Username=os.getenv("Username")
@@ -83,7 +97,7 @@ else:
     ErrorCode(0)
     raise SystemExit
 
-#Testing
+# Internet Connection Test
 url = 'https://google.com/'
 request_internet = requests.get(url)
 if request_internet.status_code == 200:
@@ -94,22 +108,23 @@ else:
     raise SystemExit
 
 
-#VersionChecker
-version='beta-0.7' #don't edit this!
-url = 'https://pastebin.com/raw/RmfvMed7' #don't edit this unless you're using a fork version!
+# Update Check
+version='1.0_pre1' #don't edit this!
+url = 'https://pastebin.com/raw/RmfvMed7' #don't edit this unless you're using a custom version!
 request_latest = requests.get(url)
 latest_version = request_latest.text
 if version==latest_version:
-    msg("log", "There's no new Version available!")
+    msg("warning", f"This is a Pre Release Version!")
+    #msg("log", "There's no new Version available!")
 else:
-    msg("warning", f"There's a new Version available! [{latest_version}]")
-
-PLATFORM="Linux"
+    #msg("warning", f"There's a new Version available! [{latest_version}]")
+    msg("warning", f"This is a Pre Release Version!")
 
 if PLATFORM=="Windows":
     engine = pyttsx3.init("sapi5")
 elif PLATFORM=="MacOS":
-    engine = pyttsx3.init("espeak")
+    msg("error", "MacOS isnt supported yet!")
+    raise SystemExit
 elif PLATFORM=="Linux":
     engine = pyttsx3.init("espeak")
 else:
@@ -144,6 +159,7 @@ def listen():
 
 if __name__ == "__main__":
     load_dotenv("conf/messages.env")
+    msg("log", "Loading Language...")
     joke=os.getenv("Joke_" + GeneralLanguage)
     clock=os.getenv("Clock_" + GeneralLanguage)
     clock_message=os.getenv("Clock_msg_" + GeneralLanguage)
