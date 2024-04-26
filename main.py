@@ -1,18 +1,42 @@
-import datetime
-import time
-import pyttsx3
-import speech_recognition as sr
-import platform
-from dotenv import load_dotenv
-#from playsound import playsound
-from threading import Thread
-import wikipedia as wp
-import pyjokes as pj
-import random
-import requests
-import os
-from colorama import *
-init(autoreset=True)
+try:
+    import datetime
+    import time
+    import speech_recognition as sr
+    import pyttsx3
+    import platform
+    from dotenv import load_dotenv
+    # from playsound import playsound
+    from threading import Thread
+    import wikipedia as wp
+    import pyjokes as pj
+    import random
+    import requests
+    import os
+    from colorama import *
+    init(autoreset=True)
+except Exception:
+    print("Installing Packages...")
+    try:
+        import os
+        print("Installing SpeechRecognition...")
+        os.system("pip3 install SpeechRecognition")
+        print("Installing PyTTSx3...")
+        os.system("pip3 install pyttsx3")
+        print("Installing dotenv...")
+        os.system("pip3 install python-dotenv")
+        print("Installing Wikipedia...")
+        os.system("pip3 install wikipedia")
+        print("Installing PyJokes...")
+        os.system("pip3 install pyjokes")
+        print("Installing Requests...")
+        os.system("pip3 install requests")
+        print("Installing Colorama...")
+        os.system("pip3 install colorama")
+    except Exception as e:
+        print("Couldn't install the requirements!")
+        print(e)
+        raise SystemExit
+
 def msg(type,content):
     if type=="log":
         print(Fore.GREEN + "ViTo" + Fore.LIGHTBLACK_EX + " × " + Fore.LIGHTWHITE_EX + content)
@@ -50,66 +74,71 @@ def ringtone():
     while (count < 5):
         count = count + 1
         try:
-            pass
-            #playsound("assets/assistant_timer_ringtone.mp3")
+            msg("log", "Ringtone is disabled in this preview!")
+            #playsound("assets/ringtone.mp3")
         except Exception:
             ErrorCode(2)
             break
 if PLATFORM=="Windows":
     os.system("cls")
+msg("log", "Loading Settings...")
 load_dotenv("conf/settings.env") #SettingsFile path
-#Settings
-Username=os.getenv("Username")
-AssistantName=os.getenv("AssistantName")
-GeneralLanguage=os.getenv("GeneralLanguage")
-#Settings
+Username=os.getenv("Name")
+AssistantName=os.getenv("WakeWord")
+GeneralLanguage=os.getenv("Language")
+if GeneralLanguage=="de-DE":
+    GeneralLanguage_short="Deutsch"
+elif GeneralLanguage=="en-GB":
+    GeneralLanguage_short="English"
+else:
+    GeneralLanguage_short = "unknown"
+msg("log", "Loaded Settings!")
 
 if GeneralLanguage=='de-DE':
+    msg("log", "Setting language to 'Deutsch'")
     jokelanguage='de'
 elif GeneralLanguage=='en-GB':
+    msg("log", "Setting language to 'English'")
     jokelanguage='en'
-elif GeneralLanguage=='en-US':
-    ErrorCode(5)
-    raise SystemExit
 else:
     ErrorCode(0)
     raise SystemExit
+msg("log", f"Language set to '{GeneralLanguage_short}'")
 
 if GeneralLanguage=='de-DE':
+    msg("log", f"Setting voice to '{GeneralLanguage_short}'")
     speekvoice=-2
 elif GeneralLanguage=='en-GB':
+    msg("log", f"Setting voice to '{GeneralLanguage_short}'")
     speekvoice=-1
-elif GeneralLanguage=='en-US':
-    ErrorCode(5)
-    raise SystemExit
 else:
     ErrorCode(0)
     raise SystemExit
+msg("log", f"Voice set to '{GeneralLanguage_short}'")
 
 if GeneralLanguage=='de-DE':
     wp.set_lang("de")
 elif GeneralLanguage=='en-GB':
     wp.set_lang("en")
-elif GeneralLanguage=='en-US':
-    ErrorCode(5)
-    raise SystemExit
 else:
     ErrorCode(0)
     raise SystemExit
 
 # Internet Connection Test
 url = 'https://google.com/'
+msg("log", f"Set url to '{url}'")
 request_internet = requests.get(url)
 if request_internet.status_code == 200:
     msg("log", "Connected with the Internet!")
 else:
+    msg("warning", f"Couldn't connect to {url}")
     msg("warning", f"The Status Code is {request_internet.status_code}")
-    ErrorCode(6)
     raise SystemExit
 
 
 # Update Check
-version='1.0_pre1' #don't edit this!
+version='1.0_pre2' #don't edit this!
+msg("log", f"Detected version: '{version}'")
 url = 'https://pastebin.com/raw/RmfvMed7' #don't edit this unless you're using a custom version!
 request_latest = requests.get(url)
 latest_version = request_latest.text
@@ -204,6 +233,7 @@ if __name__ == "__main__":
     shutdown=os.getenv("Shutdown_" + GeneralLanguage)
     msg("log", f"Loaded Language {GeneralLanguage}")
 
+    msg("log", "Starting...")
     while True:
 
         listened = listen()
@@ -212,7 +242,7 @@ if __name__ == "__main__":
             first_run = True
             try:
                 pass
-                #playsound("assets/assistant_activate.mp3")
+                #playsound("assets/activate.mp3")
             except Exception:
                 ErrorCode(2)
                 break
@@ -384,7 +414,8 @@ if __name__ == "__main__":
                 else:
                     try:
                         pass
-                        #playsound("assets/assistant_deactivate.mp3")
+                        msg("warning", "Deactivate sound is disabled in this pre release!")
+                        #playsound("assets/deactivate.mp3")
                         break
                     except Exception:
                         ErrorCode(2)
